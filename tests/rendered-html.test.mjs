@@ -33,6 +33,13 @@ test("server-renders the resume builder shell", async () => {
   assert.match(html, /凡立橙股份有限公司/);
   assert.match(html, /銳宇能源股份有限公司/);
   assert.match(html, /哈瑪星科技股份有限公司/);
+  assert.match(html, /圓展科技股份有限公司/);
+  assert.match(html, /高琪系統整合有限公司/);
+  assert.match(html, /成功大學資訊工程系/);
+  assert.match(html, /華碩電腦股份有限公司/);
+  assert.match(html, /芯鼎科技股份有限公司/);
+  assert.match(html, /作品集佐證|精選作品/);
+  assert.match(html, /Bitbucket Pipeline CI\/CD/);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });

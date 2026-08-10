@@ -1,7 +1,12 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
-import { Experience, initialResume, ResumeData } from "./resume-data";
+import {
+  Experience,
+  initialResume,
+  PortfolioItem,
+  ResumeData,
+} from "./resume-data";
 
 type ExperienceDraft = Omit<Experience, "id" | "stack" | "highlights"> & {
   stack: string;
@@ -11,7 +16,8 @@ type ExperienceDraft = Omit<Experience, "id" | "stack" | "highlights"> & {
 type ResumeMode = "compact" | "detail";
 type ScreenMode = "edit" | "public";
 
-const storageKey = "shang-resume-builder-v2";
+const storageKey = "shang-resume-builder-v3";
+const legacyStorageKey = "shang-resume-builder-v2";
 const hashPrefix = "#resume=";
 
 const emptyDraft: ExperienceDraft = {
@@ -53,10 +59,19 @@ function sortExperiences(experiences: Experience[]) {
   );
 }
 
-function normalizeResume(data: ResumeData): ResumeData {
+function normalizeResume(data: Partial<ResumeData>): ResumeData {
   return {
+    ...initialResume,
     ...data,
-    experiences: sortExperiences(data.experiences ?? []),
+    core: data.core?.length ? data.core : initialResume.core,
+    skills: data.skills?.length ? data.skills : initialResume.skills,
+    portfolio: data.portfolio?.length ? data.portfolio : initialResume.portfolio,
+    attachments: data.attachments?.length
+      ? data.attachments
+      : initialResume.attachments,
+    education: data.education ?? initialResume.education,
+    training: data.training ?? initialResume.training,
+    experiences: sortExperiences(data.experiences ?? initialResume.experiences),
   };
 }
 
@@ -68,63 +83,114 @@ function decodeResume(value: string) {
   return JSON.parse(decodeURIComponent(escape(atob(value)))) as ResumeData;
 }
 
+function portfolioForExperience(
+  portfolio: PortfolioItem[],
+  experienceId: string,
+) {
+  return portfolio.filter((item) => item.companyId === experienceId);
+}
+
 export default function Home() {
   const [resume, setResume] = useState<ResumeData>(initialResume);
   const [draft, setDraft] = useState<ExperienceDraft>(emptyDraft);
-  const [status, setStatus] = useState("已載入精簡履歷");
+  const [status, setStatus] = useState("已載入完整履歷資料");
   const [resumeMode, setResumeMode] = useState<ResumeMode>("compact");
   const [screenMode, setScreenMode] = useState<ScreenMode>("edit");
   const [importText, setImportText] = useState("");
+  const [readyToPersist, setReadyToPersist] = useState(false);
 
   useEffect(() => {
-    const encoded = window.location.hash.startsWith(hashPrefix)
-      ? window.location.hash.slice(hashPrefix.length)
-      : "";
+    const timer = window.setTimeout(() => {
+      const encoded = window.location.hash.startsWith(hashPrefix)
+        ? window.location.hash.slice(hashPrefix.length)
+        : "";
 
-    if (encoded) {
-      try {
-        const sharedResume = normalizeResume(decodeResume(encoded));
-        setResume(sharedResume);
-        setScreenMode("public");
-        setStatus("已載入公開分享版本");
-        return;
-      } catch {
-        setStatus("公開分享資料無法解析，已改用預設版本");
+      if (encoded) {
+        try {
+          const sharedResume = normalizeResume(decodeResume(encoded));
+          setResume(sharedResume);
+          setScreenMode("public");
+          setStatus("已載入公開分享版本");
+          setReadyToPersist(true);
+          return;
+        } catch {
+          setStatus("公開分享資料無法解析，已改用預設完整版本");
+        }
       }
-    }
 
-    const saved = window.localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        setResume(normalizeResume(JSON.parse(saved) as ResumeData));
-        setStatus("已載入本機保存版本");
-      } catch {
-        setStatus("本機資料格式異常，已使用預設版本");
+      const saved =
+        window.localStorage.getItem(storageKey) ??
+        window.localStorage.getItem(legacyStorageKey);
+      if (saved) {
+        try {
+          setResume(normalizeResume(JSON.parse(saved) as ResumeData));
+          setStatus("已載入本機保存版本");
+        } catch {
+          setStatus("本機資料格式異常，已使用預設完整版本");
+        }
       }
-    }
+
+      setReadyToPersist(true);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
+    if (!readyToPersist) return;
     window.localStorage.setItem(storageKey, JSON.stringify(resume));
-  }, [resume]);
+  }, [readyToPersist, resume]);
 
   const yearsLabel = useMemo(() => {
     const first = resume.experiences.at(-1)?.period.match(/(19|20)\d{2}/)?.[0];
     if (!first) return `${resume.experiences.length} 段產品實戰`;
     const years = Math.max(1, new Date().getFullYear() - Number(first) + 1);
-    return `${years}+ 年 App / 後端實戰`;
+    return `${years}+ 年產品開發與系統整合`;
+  }, [resume.experiences]);
+
+  const compactRelevantExperiences = useMemo(() => {
+    const preferredIds = new Set([
+      "flc-2026",
+      "ruiyu-2024",
+      "hamastar-2022",
+      "kao-chi-2020",
+    ]);
+    return resume.experiences.filter((item) => preferredIds.has(item.id));
   }, [resume.experiences]);
 
   const visibleExperiences = useMemo(
     () =>
-      resumeMode === "compact"
-        ? resume.experiences.map((item) => ({
-            ...item,
-            highlights: item.highlights.slice(0, 3),
-            stack: item.stack.slice(0, 8),
-          }))
-        : resume.experiences,
-    [resume.experiences, resumeMode],
+      (resumeMode === "compact"
+        ? compactRelevantExperiences
+        : resume.experiences
+      ).map((item) => ({
+        ...item,
+        highlights:
+          resumeMode === "compact" ? item.highlights.slice(0, 2) : item.highlights,
+        stack: resumeMode === "compact" ? item.stack.slice(0, 6) : item.stack,
+      })),
+    [compactRelevantExperiences, resume.experiences, resumeMode],
+  );
+
+  const archivedExperiences = useMemo(() => {
+    const visibleIds = new Set(visibleExperiences.map((item) => item.id));
+    return resume.experiences.filter((item) => !visibleIds.has(item.id));
+  }, [resume.experiences, visibleExperiences]);
+
+  const visiblePortfolio = useMemo(
+    () => {
+      if (resumeMode === "detail") return resume.portfolio;
+
+      const featuredIds = new Set([
+        "ecoco-app",
+        "energy-platform",
+        "taipei-fish-app",
+        "world-masters-games",
+        "hamastar-cicd",
+      ]);
+      return resume.portfolio.filter((item) => featuredIds.has(item.id));
+    },
+    [resume.portfolio, resumeMode],
   );
 
   function updateDraft(
@@ -230,6 +296,9 @@ export default function Home() {
         <div>
           <p className="eyebrow">Resume OS</p>
           <h1>資料驅動履歷工具</h1>
+          <p className="toolbar-note">
+            目前資料含 {resume.experiences.length} 段經歷、{resume.portfolio.length} 件作品佐證。
+          </p>
         </div>
         <div className="toolbar-actions" role="group" aria-label="履歷操作">
           <button
@@ -250,7 +319,7 @@ export default function Home() {
               )
             }
           >
-            {resumeMode === "compact" ? "一頁版" : "詳細版"}
+            {resumeMode === "compact" ? "一頁版：精簡投遞" : "詳細版：完整履歷"}
           </button>
           <button type="button" onClick={() => window.print()}>
             下載 PDF
@@ -266,7 +335,9 @@ export default function Home() {
           <section className="panel status-panel">
             <div>
               <strong>{status}</strong>
-              <span>新增公司後會自動排序，PDF 與公開連結會共用同一份資料。</span>
+              <span>
+                新增公司後會依起始日期自動排序；公開連結、JSON 與 PDF 都使用同一份資料。
+              </span>
             </div>
           </section>
 
@@ -397,10 +468,21 @@ export default function Home() {
             </div>
             <address>
               <a href={`mailto:${resume.email}`}>{resume.email}</a>
-              <a href={`tel:${resume.phone.replace(/\s/g, "")}`}>{resume.phone}</a>
+              <a href={`tel:${resume.phone.replace(/\s/g, "")}`}>
+                {resume.phone}
+              </a>
               <span>{resume.location}</span>
             </address>
           </header>
+
+          <section className="mode-strip no-print" aria-label="目前履歷版本">
+            <span>{resumeMode === "compact" ? "一頁版" : "詳細版"}</span>
+            <p>
+              {resumeMode === "compact"
+                ? "聚焦 Flutter App、REST 後端與近年完整產品交付，適合投遞履歷。"
+                : "展開完整職涯、作品集佐證、附件與學歷課程，適合公開瀏覽或深入面談。"}
+            </p>
+          </section>
 
           <section className="resume-section summary">
             <h3>定位</h3>
@@ -421,12 +503,8 @@ export default function Home() {
             <div className="skill-grid">
               {resume.skills.map((group) => (
                 <div key={group.label} className="skill-block">
-                  <strong>{group.label}</strong>
-                  <div>
-                    {group.items.map((item) => (
-                      <span key={item}>{item}</span>
-                    ))}
-                  </div>
+                  <span>{group.label}</span>
+                  <p>{group.items.join(" / ")}</p>
                 </div>
               ))}
             </div>
@@ -435,30 +513,140 @@ export default function Home() {
           <section className="resume-section">
             <h3>實務經驗</h3>
             <div className="timeline">
-              {visibleExperiences.map((item) => (
-                <section className="job" key={item.id}>
-                  <div className="job-head">
-                    <div>
-                      <h4>{item.company}</h4>
-                      <p>{item.role}</p>
+              {visibleExperiences.map((item) => {
+                const relatedPortfolio = portfolioForExperience(
+                  resume.portfolio,
+                  item.id,
+                );
+
+                return (
+                  <section className="job" key={item.id}>
+                    <div className="job-head">
+                      <div>
+                        <h4>{item.company}</h4>
+                        <p>{item.role}</p>
+                      </div>
+                      <time>{item.period}</time>
                     </div>
+                    <p className="focus">{item.focus}</p>
+                    <ul>
+                      {item.highlights.map((highlight) => (
+                        <li key={highlight}>{highlight}</li>
+                      ))}
+                    </ul>
+                    <div className="stack">
+                      {item.stack.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
+                    </div>
+                    {relatedPortfolio.length > 0 && (
+                      <div className="job-links">
+                        {relatedPortfolio.slice(0, 3).map((project) => (
+                          <a href={`#${project.id}`} key={project.id}>
+                            {project.title}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
+
+              {resumeMode === "compact" && archivedExperiences.length > 0 && (
+                <section className="archive-summary">
+                  <h4>早期經歷摘要</h4>
+                  <div>
+                    {archivedExperiences.map((item) => (
+                      <p key={item.id}>
+                        <span>{item.period}</span>
+                        {item.company} / {item.focus}
+                      </p>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          </section>
+
+          <section className="resume-section portfolio-section">
+            <h3>{resumeMode === "compact" ? "精選作品" : "作品集佐證"}</h3>
+            <div className="portfolio-grid">
+              {visiblePortfolio.map((item) => (
+                <section className="portfolio-card" id={item.id} key={item.id}>
+                  <div className="portfolio-head">
+                    <span>{item.category}</span>
                     <time>{item.period}</time>
                   </div>
-                  <p className="focus">{item.focus}</p>
-                  <ul>
-                    {item.highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
-                    ))}
-                  </ul>
+                  <h4>{item.title}</h4>
+                  <p>{item.summary}</p>
+                  <small>{item.role}</small>
                   <div className="stack">
-                    {item.stack.map((tag) => (
+                    {item.stack.slice(0, resumeMode === "compact" ? 5 : 9).map((tag) => (
                       <span key={tag}>{tag}</span>
                     ))}
                   </div>
+                  {item.links.length > 0 && (
+                    <div className="resource-links">
+                      {item.links.map((link) => (
+                        <a href={link.href} key={link.href} target="_blank">
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </section>
               ))}
             </div>
           </section>
+
+          {resumeMode === "detail" && (
+            <>
+              <section className="resume-section references-section">
+                <h3>參考資料</h3>
+                <div className="attachment-list">
+                  {resume.attachments.map((item) => (
+                    <a href={item.href} key={item.href} target="_blank">
+                      <span>{item.title}</span>
+                      <small>{item.description}</small>
+                    </a>
+                  ))}
+                </div>
+              </section>
+
+              <section className="resume-section">
+                <h3>學歷與進修</h3>
+                <div className="education-block">
+                  <section>
+                    <div className="job-head compact-head">
+                      <div>
+                        <h4>{resume.education.school}</h4>
+                        <p>{resume.education.degree}</p>
+                      </div>
+                      <time>{resume.education.period}</time>
+                    </div>
+                    <ul>
+                      {resume.education.notes.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section>
+                    <div className="job-head compact-head">
+                      <div>
+                        <h4>{resume.training.title}</h4>
+                      </div>
+                      <time>{resume.training.period}</time>
+                    </div>
+                    <ul>
+                      {resume.training.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                </div>
+              </section>
+            </>
+          )}
         </article>
       </div>
     </main>
