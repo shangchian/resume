@@ -59,19 +59,28 @@ function sortExperiences(experiences: Experience[]) {
   );
 }
 
+function mergeById<T extends { id: string }>(saved: T[] | undefined, defaults: T[]) {
+  const savedItems = saved ?? [];
+  const savedIds = new Set(savedItems.map((item) => item.id));
+  const missingDefaults = defaults.filter((item) => !savedIds.has(item.id));
+  return [...savedItems, ...missingDefaults];
+}
+
 function normalizeResume(data: Partial<ResumeData>): ResumeData {
   return {
     ...initialResume,
     ...data,
     core: data.core?.length ? data.core : initialResume.core,
     skills: data.skills?.length ? data.skills : initialResume.skills,
-    portfolio: data.portfolio?.length ? data.portfolio : initialResume.portfolio,
+    portfolio: mergeById(data.portfolio, initialResume.portfolio),
     attachments: data.attachments?.length
       ? data.attachments
       : initialResume.attachments,
     education: data.education ?? initialResume.education,
     training: data.training ?? initialResume.training,
-    experiences: sortExperiences(data.experiences ?? initialResume.experiences),
+    experiences: sortExperiences(
+      mergeById(data.experiences, initialResume.experiences),
+    ),
   };
 }
 
