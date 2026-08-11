@@ -249,7 +249,9 @@ export default function Home() {
       ).map((item) => ({
         ...item,
         highlights:
-          resumeMode === "compact" ? item.highlights.slice(0, 2) : item.highlights,
+          resumeMode === "compact"
+            ? item.highlights.slice(0, item.id === "flc-2026" ? 3 : 2)
+            : item.highlights,
         stack: resumeMode === "compact" ? item.stack.slice(0, 6) : item.stack,
       })),
     [compactRelevantExperiences, resume.experiences, resumeMode],

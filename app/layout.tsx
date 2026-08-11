@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "劉尚謙履歷",
-  description: "Flutter App、REST 後端與全端工程師履歷。",
+  description: "Flutter App、REST 後端與技術主導工程師履歷。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

@@ -29,7 +29,8 @@ test("server-renders the resume builder shell", async () => {
 
   const html = await response.text();
   assert.match(html, /資料驅動履歷工具/);
-  assert.match(html, /Flutter App \/ REST 後端 \/ 全端工程師/);
+  assert.match(html, /Flutter App \/ REST 後端 \/ 技術主導工程師/);
+  assert.match(html, /idempotency、防重複扣款、配發確認、退款\/補發/);
   assert.match(html, /凡立橙股份有限公司/);
   assert.match(html, /銳宇能源股份有限公司/);
   assert.match(html, /哈瑪星科技股份有限公司/);
