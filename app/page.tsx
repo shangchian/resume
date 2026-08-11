@@ -102,6 +102,7 @@ function imageFileToDataUrl(file: File) {
       image.onerror = () => reject(new Error("image failed"));
       image.onload = () => {
         const targetSize = 520;
+        const padding = 16;
         const canvas = document.createElement("canvas");
         canvas.width = targetSize;
         canvas.height = targetSize;
@@ -111,19 +112,24 @@ function imageFileToDataUrl(file: File) {
           return;
         }
 
-        const sourceSize = Math.min(image.width, image.height);
-        const sourceX = (image.width - sourceSize) / 2;
-        const sourceY = (image.height - sourceSize) / 2;
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, targetSize, targetSize);
+
+        const scale = Math.min(
+          (targetSize - padding * 2) / image.width,
+          (targetSize - padding * 2) / image.height,
+        );
+        const drawWidth = image.width * scale;
+        const drawHeight = image.height * scale;
+        const drawX = (targetSize - drawWidth) / 2;
+        const drawY = (targetSize - drawHeight) / 2;
+
         context.drawImage(
           image,
-          sourceX,
-          sourceY,
-          sourceSize,
-          sourceSize,
-          0,
-          0,
-          targetSize,
-          targetSize,
+          drawX,
+          drawY,
+          drawWidth,
+          drawHeight,
         );
         resolve(canvas.toDataURL("image/jpeg", 0.82));
       };
