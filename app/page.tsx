@@ -333,6 +333,14 @@ export default function Home({ publicOnly = false }: HomeProps = {}) {
     setStatus("已複製正式公開網址；若履歷內容有異動，請重新發布後再分享");
   }
 
+  async function copyEditorLink() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("mode", "edit");
+    url.hash = "";
+    await navigator.clipboard.writeText(url.toString());
+    setStatus("已複製編輯工具網址，這個網址請自己使用，不建議公開分享");
+  }
+
   async function copyJson() {
     await navigator.clipboard.writeText(JSON.stringify(resume, null, 2));
     setStatus("已複製履歷 JSON");
@@ -453,6 +461,9 @@ export default function Home({ publicOnly = false }: HomeProps = {}) {
           </button>
           <button type="button" onClick={copyPublicLink}>
             複製公開連結
+          </button>
+          <button type="button" onClick={copyEditorLink}>
+            複製編輯連結
           </button>
         </div>
         </section>
