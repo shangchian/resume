@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Experience,
@@ -90,6 +91,46 @@ function encodeResume(data: ResumeData) {
 
 function decodeResume(value: string) {
   return JSON.parse(decodeURIComponent(escape(atob(value)))) as ResumeData;
+}
+
+function imageFileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read failed"));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("image failed"));
+      image.onload = () => {
+        const targetSize = 520;
+        const canvas = document.createElement("canvas");
+        canvas.width = targetSize;
+        canvas.height = targetSize;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("canvas failed"));
+          return;
+        }
+
+        const sourceSize = Math.min(image.width, image.height);
+        const sourceX = (image.width - sourceSize) / 2;
+        const sourceY = (image.height - sourceSize) / 2;
+        context.drawImage(
+          image,
+          sourceX,
+          sourceY,
+          sourceSize,
+          sourceSize,
+          0,
+          0,
+          targetSize,
+          targetSize,
+        );
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      image.src = String(reader.result ?? "");
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 function portfolioForExperience(
@@ -296,6 +337,26 @@ export default function Home() {
     reader.readAsText(file);
   }
 
+  async function uploadPhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const photo = await imageFileToDataUrl(file);
+      setResume((current) => ({ ...current, photo }));
+      setStatus("已更新履歷照片");
+    } catch {
+      setStatus("照片讀取失敗，請改用 JPG 或 PNG");
+    } finally {
+      event.target.value = "";
+    }
+  }
+
+  function removePhoto() {
+    setResume((current) => ({ ...current, photo: undefined }));
+    setStatus("已移除履歷照片");
+  }
+
   return (
     <main
       className={`site ${screenMode === "public" ? "public-mode" : ""}`}
@@ -347,6 +408,49 @@ export default function Home() {
               <span>
                 新增公司後會依起始日期自動排序；公開連結、JSON 與 PDF 都使用同一份資料。
               </span>
+            </div>
+          </section>
+
+          <section className="panel mode-panel">
+            <div className="panel-heading">
+              <span>版本切換</span>
+              <small>只供編輯判斷</small>
+            </div>
+            <p>
+              {resumeMode === "compact"
+                ? "一頁版會收斂早期經歷與部分作品，適合投遞履歷。"
+                : "詳細版會展開完整職涯、作品集佐證、附件與學歷課程。"}
+            </p>
+          </section>
+
+          <section className="panel">
+            <div className="panel-heading">
+              <span>履歷照片</span>
+              <small>JPG / PNG</small>
+            </div>
+            <div className="photo-editor">
+              {resume.photo ? (
+                <Image
+                  src={resume.photo}
+                  alt="目前履歷照片預覽"
+                  width={76}
+                  height={76}
+                  unoptimized
+                />
+              ) : (
+                <div aria-hidden="true">{resume.name.slice(0, 1)}</div>
+              )}
+              <div>
+                <label className="file-field">
+                  上傳照片
+                  <input type="file" accept="image/*" onChange={uploadPhoto} />
+                </label>
+                {resume.photo && (
+                  <button type="button" onClick={removePhoto}>
+                    移除照片
+                  </button>
+                )}
+              </div>
             </div>
           </section>
 
@@ -475,23 +579,26 @@ export default function Home() {
               <h2>{resume.name}</h2>
               <p className="title">{resume.title}</p>
             </div>
-            <address>
-              <a href={`mailto:${resume.email}`}>{resume.email}</a>
-              <a href={`tel:${resume.phone.replace(/\s/g, "")}`}>
-                {resume.phone}
-              </a>
-              <span>{resume.location}</span>
-            </address>
+            <div className="identity-aside">
+              {resume.photo && (
+                <Image
+                  className="profile-photo"
+                  src={resume.photo}
+                  alt={`${resume.name} 履歷照片`}
+                  width={132}
+                  height={132}
+                  unoptimized
+                />
+              )}
+              <address>
+                <a href={`mailto:${resume.email}`}>{resume.email}</a>
+                <a href={`tel:${resume.phone.replace(/\s/g, "")}`}>
+                  {resume.phone}
+                </a>
+                <span>{resume.location}</span>
+              </address>
+            </div>
           </header>
-
-          <section className="mode-strip no-print" aria-label="目前履歷版本">
-            <span>{resumeMode === "compact" ? "一頁版" : "詳細版"}</span>
-            <p>
-              {resumeMode === "compact"
-                ? "聚焦 Flutter App、REST 後端與近年完整產品交付，適合投遞履歷。"
-                : "展開完整職涯、作品集佐證、附件與學歷課程，適合公開瀏覽或深入面談。"}
-            </p>
-          </section>
 
           <section className="resume-section summary">
             <h3>定位</h3>

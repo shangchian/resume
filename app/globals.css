@@ -6,11 +6,13 @@
   --quiet: #8a94a6;
   --line: #d9dee7;
   --paper: #ffffff;
-  --canvas: #f4f6f9;
+  --canvas: #eef2f7;
   --panel: #ffffff;
   --field: #f8fafc;
   --accent: #2563a8;
   --accent-soft: #eef5ff;
+  --accent-block: #dbeafe;
+  --slate-block: #edf1f6;
   --danger: #b42318;
   --shadow: 0 18px 42px rgba(31, 41, 51, 0.08);
 }
@@ -77,9 +79,44 @@ a {
 }
 
 .site {
+  position: relative;
   min-height: 100vh;
   padding: 24px;
-  background: var(--canvas);
+  overflow-x: hidden;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 168, 0.16) 0 1px, transparent 1px 42px),
+    linear-gradient(45deg, rgba(31, 41, 51, 0.06) 0 1px, transparent 1px 36px),
+    radial-gradient(circle at 16% 8%, rgba(219, 234, 254, 0.9), transparent 28%),
+    var(--canvas);
+  background-size:
+    42px 42px,
+    36px 36px,
+    auto,
+    auto;
+}
+
+.site::before {
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: min(38vw, 460px);
+  height: min(34vw, 380px);
+  background: linear-gradient(135deg, rgba(37, 99, 168, 0.18), rgba(148, 163, 184, 0));
+  clip-path: polygon(0 0, 100% 0, 68% 100%, 0 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.site::after {
+  position: fixed;
+  right: -80px;
+  bottom: -120px;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(37, 99, 168, 0.14);
+  border-radius: 40px;
+  transform: rotate(18deg);
+  content: "";
+  pointer-events: none;
 }
 
 .toolbar {
@@ -128,6 +165,8 @@ a {
 }
 
 .workspace {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 920px);
   align-items: start;
@@ -149,6 +188,13 @@ a {
   background: var(--panel);
   box-shadow: 0 10px 26px rgba(31, 41, 51, 0.05);
   padding: 16px;
+}
+
+.mode-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .status-panel {
@@ -242,6 +288,36 @@ textarea:focus {
   background: #fff;
 }
 
+.photo-editor {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo-editor img,
+.photo-editor > div:first-child {
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.photo-editor > div:first-child {
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 28px;
+  font-weight: 650;
+}
+
+.photo-editor > div:last-child {
+  display: grid;
+  gap: 8px;
+}
+
 .experience-list {
   display: grid;
   gap: 8px;
@@ -278,6 +354,8 @@ textarea:focus {
 }
 
 .resume-sheet {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
@@ -285,12 +363,28 @@ textarea:focus {
   padding: clamp(28px, 5vw, 52px);
 }
 
+.resume-sheet::before {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 120px;
+  background:
+    linear-gradient(90deg, rgba(37, 99, 168, 0.14), transparent 62%),
+    linear-gradient(135deg, transparent 0 70%, rgba(37, 99, 168, 0.1) 70% 72%, transparent 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.resume-sheet > * {
+  position: relative;
+  z-index: 1;
+}
+
 .resume-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
   align-items: start;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid #2b3b4f;
   padding-bottom: 22px;
 }
 
@@ -318,30 +412,21 @@ address {
   text-align: right;
 }
 
-.mode-strip {
+.identity-aside {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: center;
-  border-bottom: 1px solid var(--line);
-  padding: 14px 0;
+  gap: 14px;
+  justify-items: end;
 }
 
-.mode-strip span {
-  border: 1px solid #bfd0e5;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.mode-strip p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
+.profile-photo {
+  width: 132px;
+  height: 132px;
+  border: 1px solid #c6d4e5;
+  border-radius: 10px;
+  background: #fff;
+  object-fit: cover;
+  padding: 4px;
+  box-shadow: 0 12px 28px rgba(31, 41, 51, 0.12);
 }
 
 .resume-section {
@@ -366,6 +451,9 @@ address {
 
 .summary p {
   margin: 0;
+  border-left: 4px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent);
+  padding: 12px 16px;
   font-size: 18px;
   font-weight: 400;
   line-height: 1.75;
@@ -380,8 +468,11 @@ address {
 .core-grid p {
   min-height: 100%;
   margin: 0;
-  border-left: 2px solid var(--accent);
-  padding: 3px 0 3px 12px;
+  border: 1px solid #dde7f3;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: #f8fbff;
+  padding: 10px 12px;
   color: #344054;
   line-height: 1.55;
 }
@@ -463,7 +554,7 @@ address {
 
 .focus {
   border-left: 2px solid #b7c8dd;
-  background: #f8fafc;
+  background: linear-gradient(90deg, #f1f6fd, #fff);
   padding: 9px 12px;
   color: #344054;
   line-height: 1.6;
@@ -537,7 +628,9 @@ address {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
-  background: #fff;
+  background:
+    linear-gradient(135deg, rgba(219, 234, 254, 0.72), transparent 32%),
+    #fff;
 }
 
 .portfolio-head {
@@ -574,7 +667,7 @@ address {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
-  background: #fff;
+  background: #f8fbff;
 }
 
 .attachment-list span {
@@ -626,8 +719,7 @@ address {
   .job-head,
   .skill-block,
   .core-grid,
-  .portfolio-grid,
-  .mode-strip {
+  .portfolio-grid {
     grid-template-columns: 1fr;
   }
 
@@ -661,6 +753,15 @@ address {
     text-align: left;
   }
 
+  .identity-aside {
+    justify-items: start;
+  }
+
+  .profile-photo {
+    width: 108px;
+    height: 108px;
+  }
+
   .job time,
   .portfolio-head time {
     white-space: normal;
@@ -685,6 +786,12 @@ address {
 
   .no-print {
     display: none !important;
+  }
+
+  .site::before,
+  .site::after,
+  .resume-sheet::before {
+    display: none;
   }
 
   .workspace {
@@ -713,6 +820,13 @@ address {
 
   address {
     font-size: 11px;
+  }
+
+  .profile-photo {
+    width: 82px;
+    height: 82px;
+    padding: 2px;
+    box-shadow: none;
   }
 
   .resume-section {

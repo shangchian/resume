@@ -37,6 +37,7 @@ export type ResumeData = {
   location: string;
   email: string;
   phone: string;
+  photo?: string;
   summary: string;
   core: string[];
   skills: { label: string; items: string[] }[];
