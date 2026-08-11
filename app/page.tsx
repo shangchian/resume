@@ -265,6 +265,7 @@ export default function Home() {
       if (resumeMode === "detail") return resume.portfolio;
 
       const featuredIds = new Set([
+        "ecoco-core-app",
         "ecoco-app",
         "energy-platform",
         "taipei-fish-app",

@@ -140,8 +140,8 @@ export const initialResume: ResumeData = {
       ],
       highlights: [
         "接手既有 ECOCO App 後梳理架構與阻塞點，於兩個月內穩定完成 App Store / Google Play 上架。",
-        "負責 Flutter、Riverpod、REST API 串接、Firebase、IAP、推播與本地資料快取等 App 核心開發。",
-        "完整實作與維護 ECO-Buddy 寵物養成系統，涵蓋任務、錢包、背包、圖鑑、道具、推播與 Firestore 多資料庫配置。",
+        "維護與開發一般模式核心流程，包含站點列表/收藏、服務狀態提示、活動專區、商家優惠、點數、通知導頁與 Deep Link，整合 REST API、S3 JSON、GA4 與 Drift 本地快取。",
+        "完整實作與維護 ECO-Buddy 寵物養成系統，涵蓋任務、錢包、背包、圖鑑、道具、推播、IAP 交易與 Firestore 多資料庫配置。",
         "導入 IAP 虛擬商品購買流程與環境隔離的 FCM 推播架構，支援營運活動與商品設定。",
         "現代化 Vanilla JS 營運後台，加入 Firebase Custom Claims RBAC、設定驗證與遊戲數值管理流程。",
       ],
@@ -318,6 +318,18 @@ export const initialResume: ResumeData = {
     },
   ],
   portfolio: [
+    {
+      id: "ecoco-core-app",
+      title: "ECOCO 一般模式產品維護與資料流",
+      period: "2026",
+      companyId: "flc-2026",
+      category: "App",
+      summary:
+        "維護站點、活動、商家優惠、點數與通知等一般模式核心流程，串接 REST API、S3 動態內容、Deep Link、GA4 埋點與 Drift 本地快取。",
+      role: "Flutter App / REST API / Drift / Deep Link 開發",
+      stack: ["Flutter", "Riverpod", "Dio", "Drift", "Deep Link", "GA4", "S3 JSON"],
+      links: [],
+    },
     {
       id: "ecoco-app",
       title: "ECOCO App 與 ECO-Buddy 遊戲化系統",
