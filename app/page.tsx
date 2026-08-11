@@ -67,13 +67,39 @@ function mergeById<T extends { id: string }>(saved: T[] | undefined, defaults: T
   return [...savedItems, ...missingDefaults];
 }
 
+function mergePortfolio(
+  saved: PortfolioItem[] | undefined,
+  defaults: PortfolioItem[],
+) {
+  const savedById = new Map((saved ?? []).map((item) => [item.id, item]));
+  const mergedDefaults = defaults.map((defaultItem) => {
+    const savedItem = savedById.get(defaultItem.id);
+    if (!savedItem) return defaultItem;
+
+    const defaultLinkHrefs = new Set(defaultItem.links.map((link) => link.href));
+    const savedOnlyLinks = savedItem.links.filter(
+      (link) => !defaultLinkHrefs.has(link.href),
+    );
+
+    return {
+      ...defaultItem,
+      ...savedItem,
+      links: [...defaultItem.links, ...savedOnlyLinks],
+    };
+  });
+
+  const defaultIds = new Set(defaults.map((item) => item.id));
+  const savedOnlyItems = (saved ?? []).filter((item) => !defaultIds.has(item.id));
+  return [...mergedDefaults, ...savedOnlyItems];
+}
+
 function normalizeResume(data: Partial<ResumeData>): ResumeData {
   return {
     ...initialResume,
     ...data,
     core: data.core?.length ? data.core : initialResume.core,
     skills: data.skills?.length ? data.skills : initialResume.skills,
-    portfolio: mergeById(data.portfolio, initialResume.portfolio),
+    portfolio: mergePortfolio(data.portfolio, initialResume.portfolio),
     attachments: data.attachments?.length
       ? data.attachments
       : initialResume.attachments,
