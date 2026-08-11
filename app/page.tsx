@@ -748,13 +748,24 @@ export default function Home() {
                     ))}
                   </div>
                   {item.links.length > 0 && (
-                    <div className="resource-links">
-                      {item.links.map((link) => (
-                        <a href={link.href} key={link.href} target="_blank">
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
+                    <details className="resource-disclosure">
+                      <summary>
+                        Demo / 佐證連結
+                        <span>{item.links.length}</span>
+                      </summary>
+                      <div className="resource-links">
+                        {item.links.map((link) => (
+                          <a
+                            href={link.href}
+                            key={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    </details>
                   )}
                 </section>
               ))}

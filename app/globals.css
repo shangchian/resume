@@ -579,8 +579,7 @@ address {
 }
 
 .stack,
-.job-links,
-.resource-links {
+.job-links {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
@@ -596,12 +595,78 @@ address {
   font-weight: 500;
 }
 
-.job-links a,
-.resource-links a {
+.job-links a {
   border-bottom: 1px solid #9ab8dd;
   color: var(--accent);
   font-size: 13px;
   line-height: 1.45;
+}
+
+.resource-disclosure {
+  border-top: 1px solid #e4eaf2;
+  padding-top: 8px;
+}
+
+.resource-disclosure summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  list-style: none;
+  padding: 8px 10px;
+}
+
+.resource-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.resource-disclosure summary::before {
+  color: #667085;
+  content: "+";
+  font-weight: 650;
+}
+
+.resource-disclosure[open] summary::before {
+  content: "-";
+}
+
+.resource-disclosure summary span {
+  display: inline-grid;
+  min-width: 24px;
+  height: 24px;
+  margin-left: auto;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.resource-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.resource-links a {
+  display: block;
+  min-height: 36px;
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  padding: 8px 10px;
 }
 
 .archive-summary {
@@ -629,6 +694,7 @@ address {
 .portfolio-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 14px;
 }
 
