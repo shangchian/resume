@@ -451,7 +451,7 @@ export const initialResume: ResumeData = {
       links: [
         {
           label: "CI/CD 流程圖 PDF",
-          href: "/portfolio/hamastar-bitbucket-cicd-flow.pdf",
+          href: "portfolio/hamastar-bitbucket-cicd-flow.pdf",
         },
       ],
     },
@@ -472,17 +472,17 @@ export const initialResume: ResumeData = {
     {
       title: "2021-2024 APP 開發經歷表",
       description: "補充 App 專案細節，包含台北魚類、世壯運、待辦事項、影片播放器與 WMS。",
-      href: "/portfolio/app-experience-2021-2024.pdf",
+      href: "portfolio/app-experience-2021-2024.pdf",
     },
     {
       title: "作品集 - 尚謙 to 2025",
       description: "補充 App、Web 後台、能源監控、原住民知識體系等作品與操作影片連結。",
-      href: "/portfolio/portfolio-shang-to-2025.pdf",
+      href: "portfolio/portfolio-shang-to-2025.pdf",
     },
     {
       title: "Bitbucket Pipeline CI/CD 流程圖",
       description: "哈瑪星科技期間導入行動 App 發布與掃描流程的 CI/CD 架構圖。",
-      href: "/portfolio/hamastar-bitbucket-cicd-flow.pdf",
+      href: "portfolio/hamastar-bitbucket-cicd-flow.pdf",
     },
   ],
   education: {
