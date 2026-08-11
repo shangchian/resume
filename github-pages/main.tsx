@@ -6,6 +6,6 @@ import "../app/globals.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Home />
+    <Home publicOnly />
   </StrictMode>,
 );

@@ -768,6 +768,18 @@ address {
   max-width: 980px;
 }
 
+.published-site {
+  padding: clamp(16px, 3.5vw, 42px);
+}
+
+.published-site .workspace {
+  max-width: 1040px;
+}
+
+.published-site .resume-sheet {
+  margin: 0 auto;
+}
+
 @media (max-width: 1080px) {
   .workspace {
     grid-template-columns: 1fr;

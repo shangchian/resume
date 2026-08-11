@@ -17,6 +17,10 @@ type ExperienceDraft = Omit<Experience, "id" | "stack" | "highlights"> & {
 type ResumeMode = "compact" | "detail";
 type ScreenMode = "edit" | "public";
 
+type HomeProps = {
+  publicOnly?: boolean;
+};
+
 const storageKey = "shang-resume-builder-v3";
 const legacyStorageKey = "shang-resume-builder-v2";
 const hashPrefix = "#resume=";
@@ -111,10 +115,6 @@ function normalizeResume(data: Partial<ResumeData>): ResumeData {
   };
 }
 
-function encodeResume(data: ResumeData) {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
-
 function decodeResume(value: string) {
   return JSON.parse(decodeURIComponent(escape(atob(value)))) as ResumeData;
 }
@@ -172,17 +172,21 @@ function portfolioForExperience(
   return portfolio.filter((item) => item.companyId === experienceId);
 }
 
-export default function Home() {
+export default function Home({ publicOnly = false }: HomeProps = {}) {
   const [resume, setResume] = useState<ResumeData>(initialResume);
   const [draft, setDraft] = useState<ExperienceDraft>(emptyDraft);
   const [status, setStatus] = useState("已載入完整履歷資料");
   const [resumeMode, setResumeMode] = useState<ResumeMode>("compact");
-  const [screenMode, setScreenMode] = useState<ScreenMode>("edit");
+  const [screenMode, setScreenMode] = useState<ScreenMode>(
+    publicOnly ? "public" : "edit",
+  );
   const [importText, setImportText] = useState("");
   const [photoDraft, setPhotoDraft] = useState<string>();
-  const [readyToPersist, setReadyToPersist] = useState(false);
+  const [readyToPersist, setReadyToPersist] = useState(publicOnly);
 
   useEffect(() => {
+    if (publicOnly) return;
+
     const timer = window.setTimeout(() => {
       const encoded = window.location.hash.startsWith(hashPrefix)
         ? window.location.hash.slice(hashPrefix.length)
@@ -217,12 +221,12 @@ export default function Home() {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [publicOnly]);
 
   useEffect(() => {
-    if (!readyToPersist) return;
+    if (!readyToPersist || publicOnly) return;
     window.localStorage.setItem(storageKey, JSON.stringify(resume));
-  }, [readyToPersist, resume]);
+  }, [publicOnly, readyToPersist, resume]);
 
   const yearsLabel = useMemo(() => {
     const first = resume.experiences.at(-1)?.period.match(/(19|20)\d{2}/)?.[0];
@@ -324,9 +328,9 @@ export default function Home() {
   }
 
   async function copyPublicLink() {
-    const url = `${window.location.origin}${window.location.pathname}${hashPrefix}${encodeResume(resume)}`;
+    const url = `${window.location.origin}${window.location.pathname}`;
     await navigator.clipboard.writeText(url);
-    setStatus("已複製包含最新履歷資料的公開連結");
+    setStatus("已複製正式公開網址；若履歷內容有異動，請重新發布後再分享");
   }
 
   async function copyJson() {
@@ -409,10 +413,13 @@ export default function Home() {
 
   return (
     <main
-      className={`site ${screenMode === "public" ? "public-mode" : ""}`}
+      className={`site ${screenMode === "public" ? "public-mode" : ""} ${
+        publicOnly ? "published-site" : ""
+      }`}
       data-resume-mode={resumeMode}
     >
-      <section className="toolbar no-print" aria-label="履歷工具列">
+      {!publicOnly && (
+        <section className="toolbar no-print" aria-label="履歷工具列">
         <div>
           <p className="eyebrow">Resume OS</p>
           <h1>資料驅動履歷工具</h1>
@@ -448,10 +455,12 @@ export default function Home() {
             複製公開連結
           </button>
         </div>
-      </section>
+        </section>
+      )}
 
       <div className="workspace">
-        <aside className="editor no-print" aria-label="履歷編輯器">
+        {!publicOnly && (
+          <aside className="editor no-print" aria-label="履歷編輯器">
           <section className="panel status-panel">
             <div>
               <strong>{status}</strong>
@@ -620,7 +629,8 @@ export default function Home() {
               ))}
             </div>
           </section>
-        </aside>
+          </aside>
+        )}
 
         <article className="resume-sheet" aria-label="公開履歷預覽">
           <header className="resume-hero">
