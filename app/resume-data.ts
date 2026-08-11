@@ -342,6 +342,30 @@ export const initialResume: ResumeData = {
       stack: ["Flutter", "React", "TypeScript", "Go", "AWS IoT Core", "WebSocket", "PostgreSQL"],
       links: [
         {
+          label: "Android 充電流程與推播通知 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQC5y0rmkMfxQqbx_wwiFEZ-AQZvU6BuPaGACsYLKfDv7Os?e=b8zmPb",
+        },
+        {
+          label: "iOS 充電流程與推播通知 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQBaHrBMHk-RSZv3dSddKajCAYLJrtHvH4_Q7p36LAd8eEo?e=1cg6tt",
+        },
+        {
+          label: "iOS 會員設定與資訊找回 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQD6rL4s3ymeQ6-2ioIH7q3uAajfEH7BSTwCkffNBB5SwpM?e=dUJ3KK",
+        },
+        {
+          label: "充電站資訊 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQCLNmLgOlZ0RpqY91MFOYgGARUBJ_Yf-BaHQWTH09jdzxU?e=kSXpvh",
+        },
+        {
+          label: "登入與註冊流程 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQCRpRPvfx4JRaDv--HdCwR9ARHT_b56mi7QcRcJvPnytGo?e=ItA0JX",
+        },
+        {
+          label: "註冊後重設密碼 Demo",
+          href: "https://1drv.ms/v/c/544d54c6554d3c08/IQA2omupUpW8S6N5kXWbkdlrAXnqsq3XThB1Sx2Fh0Vu39Y?e=1OPCoh",
+        },
+        {
           label: "台科大能源監控儀表板操作影片",
           href: "https://1drv.ms/v/c/544d54c6554d3c08/EYMEwcsH8aJNkfj5R-V4fVYB63nvIKVZQVowNO0jT5UcjQ?e=h1NuzF",
         },

@@ -40,6 +40,8 @@ test("server-renders the resume builder shell", async () => {
   assert.match(html, /芯鼎科技股份有限公司/);
   assert.match(html, /作品集佐證|精選作品/);
   assert.match(html, /Bitbucket Pipeline CI\/CD/);
+  assert.match(html, /Android 充電流程與推播通知 Demo/);
+  assert.match(html, /登入與註冊流程 Demo/);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
