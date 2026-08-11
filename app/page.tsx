@@ -1,6 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Experience,
@@ -98,7 +98,7 @@ function imageFileToDataUrl(file: File) {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("read failed"));
     reader.onload = () => {
-      const image = new Image();
+      const image = new window.Image();
       image.onerror = () => reject(new Error("image failed"));
       image.onload = () => {
         const targetSize = 520;
@@ -147,6 +147,7 @@ export default function Home() {
   const [resumeMode, setResumeMode] = useState<ResumeMode>("compact");
   const [screenMode, setScreenMode] = useState<ScreenMode>("edit");
   const [importText, setImportText] = useState("");
+  const [photoDraft, setPhotoDraft] = useState<string>();
   const [readyToPersist, setReadyToPersist] = useState(false);
 
   useEffect(() => {
@@ -242,6 +243,8 @@ export default function Home() {
     },
     [resume.portfolio, resumeMode],
   );
+
+  const photoPreview = photoDraft ?? resume.photo;
 
   function updateDraft(
     key: keyof ExperienceDraft,
@@ -343,8 +346,8 @@ export default function Home() {
 
     try {
       const photo = await imageFileToDataUrl(file);
-      setResume((current) => ({ ...current, photo }));
-      setStatus("已更新履歷照片");
+      setPhotoDraft(photo);
+      setStatus("已載入照片預覽，請按「套用到履歷」");
     } catch {
       setStatus("照片讀取失敗，請改用 JPG 或 PNG");
     } finally {
@@ -352,8 +355,20 @@ export default function Home() {
     }
   }
 
+  function applyPhoto() {
+    if (!photoDraft) {
+      setStatus("請先上傳照片");
+      return;
+    }
+
+    setResume((current) => ({ ...current, photo: photoDraft }));
+    setPhotoDraft(undefined);
+    setStatus("已將照片套用到履歷");
+  }
+
   function removePhoto() {
     setResume((current) => ({ ...current, photo: undefined }));
+    setPhotoDraft(undefined);
     setStatus("已移除履歷照片");
   }
 
@@ -429,14 +444,8 @@ export default function Home() {
               <small>JPG / PNG</small>
             </div>
             <div className="photo-editor">
-              {resume.photo ? (
-                <Image
-                  src={resume.photo}
-                  alt="目前履歷照片預覽"
-                  width={76}
-                  height={76}
-                  unoptimized
-                />
+              {photoPreview ? (
+                <img src={photoPreview} alt="目前履歷照片預覽" />
               ) : (
                 <div aria-hidden="true">{resume.name.slice(0, 1)}</div>
               )}
@@ -445,7 +454,15 @@ export default function Home() {
                   上傳照片
                   <input type="file" accept="image/*" onChange={uploadPhoto} />
                 </label>
-                {resume.photo && (
+                <button
+                  className="primary"
+                  type="button"
+                  onClick={applyPhoto}
+                  disabled={!photoDraft}
+                >
+                  套用到履歷
+                </button>
+                {photoPreview && (
                   <button type="button" onClick={removePhoto}>
                     移除照片
                   </button>
@@ -581,13 +598,10 @@ export default function Home() {
             </div>
             <div className="identity-aside">
               {resume.photo && (
-                <Image
+                <img
                   className="profile-photo"
                   src={resume.photo}
                   alt={`${resume.name} 履歷照片`}
-                  width={132}
-                  height={132}
-                  unoptimized
                 />
               )}
               <address>
