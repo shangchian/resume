@@ -1,3 +1,31 @@
+# Resume
+
+## 公開履歷版與個人編輯工具版
+
+公開履歷版目前讀取的是「已部署在 GitHub Pages 的固定履歷資料」：
+
+- 公開履歷版：https://shangchian.github.io/resume/
+- 個人編輯工具版：https://shangchian.github.io/resume/?mode=edit
+
+個人編輯工具版中新增的履歷資料或上傳的圖片，會存在本機瀏覽器的
+`localStorage`。因此，在編輯模式新增的資料，可以在同一台電腦、同一個瀏覽器的
+編輯模式看到，但公開履歷版短網址不會自動更新。
+
+面試官也不會看到本機上傳的照片，除非照片已經被放進公開資源，或上傳到雲端儲存。
+
+這是 GitHub Pages 靜態網站的限制：它沒有資料庫，也不能直接把你在網頁上按「新增」
+的內容寫回 GitHub repo。
+
+目前最穩定的更新流程：
+
+1. 在編輯模式整理資料。
+2. 匯出 JSON，或直接提供要修改的內容。
+3. 更新 `resume-data.ts`。
+4. 推送到 GitHub。
+5. GitHub Pages 重新部署後，公開履歷版就會更新。
+
+---
+
 # vinext-starter
 
 A clean full-stack starter running on
