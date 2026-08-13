@@ -239,6 +239,7 @@ export default function Home({ publicOnly = false }: HomeProps = {}) {
     const preferredIds = new Set([
       "flc-2026",
       "ruiyu-2024",
+      "personal-projects",
       "hamastar-2022",
       "kao-chi-2020",
     ]);
@@ -274,6 +275,7 @@ export default function Home({ publicOnly = false }: HomeProps = {}) {
         "ecoco-core-app",
         "ecoco-app",
         "energy-platform",
+        "geo-iot-monitoring",
         "taipei-fish-app",
         "world-masters-games",
         "hamastar-cicd",
