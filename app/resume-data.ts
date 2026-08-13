@@ -177,7 +177,7 @@ export const initialResume: ResumeData = {
       company: "個人專案",
       role: "獨立端到端系統開發",
       period: "2025.10 - 2025.11",
-      focus: "即時地理資訊 IoT 監控系統、跨平台 App、Go 後端、IoT 資料流與雲端部署",
+      focus: "即時地理資訊 IoT 監控系統產品原型、跨平台 App、Go 後端、IoT 資料流與雲端部署",
       stack: [
         "Flutter",
         "Riverpod",
@@ -409,7 +409,7 @@ export const initialResume: ResumeData = {
     },
     {
       id: "geo-iot-monitoring",
-      title: "即時地理資訊 IoT 監控系統",
+      title: "個人專案｜即時地理資訊 IoT 監控系統產品原型",
       period: "2025.10 - 2025.11",
       companyId: "personal-projects",
       category: "IoT",
