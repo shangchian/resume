@@ -18,6 +18,7 @@ type ResumeMode = "compact" | "detail";
 type ScreenMode = "edit" | "public";
 
 type HomeProps = {
+  initialResumeMode?: ResumeMode;
   publicOnly?: boolean;
 };
 
@@ -172,11 +173,14 @@ function portfolioForExperience(
   return portfolio.filter((item) => item.companyId === experienceId);
 }
 
-export default function Home({ publicOnly = false }: HomeProps = {}) {
+export default function Home({
+  initialResumeMode = "compact",
+  publicOnly = false,
+}: HomeProps = {}) {
   const [resume, setResume] = useState<ResumeData>(initialResume);
   const [draft, setDraft] = useState<ExperienceDraft>(emptyDraft);
   const [status, setStatus] = useState("已載入完整履歷資料");
-  const [resumeMode, setResumeMode] = useState<ResumeMode>("compact");
+  const [resumeMode, setResumeMode] = useState<ResumeMode>(initialResumeMode);
   const [screenMode, setScreenMode] = useState<ScreenMode>(
     publicOnly ? "public" : "edit",
   );

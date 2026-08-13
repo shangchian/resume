@@ -5,6 +5,7 @@
 公開履歷版目前讀取的是「已部署在 GitHub Pages 的固定履歷資料」：
 
 - 公開履歷版：https://shangchian.github.io/resume/
+- 完整履歷版：https://shangchian.github.io/resume/?resume=detail
 - 個人編輯工具版：https://shangchian.github.io/resume/?mode=edit
 
 個人編輯工具版中新增的履歷資料或上傳的圖片，會存在本機瀏覽器的
