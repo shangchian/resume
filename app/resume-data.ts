@@ -63,6 +63,7 @@ export const initialResume: ResumeData = {
   location: "台南市永康區",
   email: "shangchiann@gmail.com",
   phone: "0988 320804",
+  photo: "profile-photo.png",
   summary:
     "專精跨平台 App 開發，能從 Flutter / Android 架構、UI/UX、REST API 串接、登入驗證、推播、支付、上架到維運監控完整交付產品；同時具備 REST 後端、Web 前端、IoT 即時資料流、Firebase 與 Go 微服務整合經驗。",
   core: [

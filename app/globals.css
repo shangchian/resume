@@ -429,12 +429,14 @@ address {
 .profile-photo {
   width: 132px;
   height: 132px;
-  border: 1px solid #c6d4e5;
-  border-radius: 10px;
+  display: block;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
   background: #fff;
-  object-fit: contain;
-  padding: 4px;
-  box-shadow: 0 12px 28px rgba(31, 41, 51, 0.12);
+  object-fit: cover;
+  object-position: center;
+  padding: 0;
+  box-shadow: 0 8px 18px rgba(31, 41, 51, 0.08);
 }
 
 .resume-section {
@@ -911,7 +913,6 @@ address {
   .profile-photo {
     width: 82px;
     height: 82px;
-    padding: 2px;
     box-shadow: none;
   }
 
