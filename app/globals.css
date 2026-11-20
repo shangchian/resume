@@ -604,6 +604,14 @@ address {
   line-height: 1.45;
 }
 
+.job-portfolio {
+  justify-self: start;
+  color: var(--accent);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .resource-disclosure {
   border-top: 1px solid #e4eaf2;
   padding-top: 8px;

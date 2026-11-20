@@ -111,7 +111,11 @@ function normalizeResume(data: Partial<ResumeData>): ResumeData {
     education: data.education ?? initialResume.education,
     training: data.training ?? initialResume.training,
     experiences: sortExperiences(
-      mergeById(data.experiences, initialResume.experiences),
+      mergeById(data.experiences, initialResume.experiences).map((item) => ({
+        ...item,
+        portfolioLink: item.portfolioLink ??
+          initialResume.experiences.find((entry) => entry.id === item.id)?.portfolioLink,
+      })),
     ),
   };
 }
@@ -721,6 +725,11 @@ export default function Home({
                       <time>{item.period}</time>
                     </div>
                     <p className="focus">{item.focus}</p>
+                    {item.portfolioLink && (
+                      <a className="job-portfolio" href={item.portfolioLink.href} target="_blank" rel="noreferrer">
+                        {item.portfolioLink.label}
+                      </a>
+                    )}
                     <ul>
                       {item.highlights.map((highlight) => (
                         <li key={highlight}>{highlight}</li>

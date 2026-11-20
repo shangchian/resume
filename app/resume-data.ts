@@ -6,6 +6,7 @@ export type Experience = {
   focus: string;
   stack: string[];
   highlights: string[];
+  portfolioLink?: PortfolioLink;
 };
 
 export type PortfolioLink = {
@@ -124,6 +125,10 @@ export const initialResume: ResumeData = {
     {
       id: "flc-2026",
       company: "凡立橙股份有限公司",
+      portfolioLink: {
+        label: "凡立橙實務作品集（PDF）",
+        href: "https://1drv.ms/b/c/544d54c6554d3c08/IQCfvEDr5pzaSokD1UH2LSx0AcqWgQf9duQfBt_O2rIhcC0?e=m8hxFU",
+      },
       role: "Flutter 軟體工程師，App/Web 跨平台開發負責人",
       period: "2026.01 - 仍在職",
       focus: "循環經濟 App、Flutter 架構、Firebase 後端、遊戲化功能與營運管理後台",
