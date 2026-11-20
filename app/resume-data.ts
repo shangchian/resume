@@ -58,6 +58,11 @@ export type ResumeData = {
   };
 };
 
+const ecoBuddyGuide: PortfolioLink = {
+  label: "ECO-Buddy 手機遊戲與營運後台導覽（PDF）",
+  href: "https://1drv.ms/b/c/544d54c6554d3c08/IQCfvEDr5pzaSokD1UH2LSx0AcqWgQf9duQfBt_O2rIhcC0?e=m8hxFU",
+};
+
 export const initialResume: ResumeData = {
   name: "劉尚謙",
   title: "Flutter App / REST 後端 / 技術主導工程師",
@@ -125,10 +130,7 @@ export const initialResume: ResumeData = {
     {
       id: "flc-2026",
       company: "凡立橙股份有限公司",
-      portfolioLink: {
-        label: "凡立橙實務作品集（PDF）",
-        href: "https://1drv.ms/b/c/544d54c6554d3c08/IQCfvEDr5pzaSokD1UH2LSx0AcqWgQf9duQfBt_O2rIhcC0?e=m8hxFU",
-      },
+      portfolioLink: ecoBuddyGuide,
       role: "Flutter 軟體工程師，App/Web 跨平台開發負責人",
       period: "2026.01 - 仍在職",
       focus: "循環經濟 App、Flutter 架構、Firebase 後端、遊戲化功能與營運管理後台",
@@ -370,7 +372,7 @@ export const initialResume: ResumeData = {
         "接手循環經濟 App 後整理架構與上架阻塞，並完成寵物養成、任務、錢包、道具、推播、IAP 與營運後台。",
       role: "Flutter App / Firebase / 後台開發負責",
       stack: ["Flutter", "Riverpod", "Firebase", "IAP", "FCM", "Cloud Functions"],
-      links: [],
+      links: [ecoBuddyGuide],
     },
     {
       id: "energy-platform",

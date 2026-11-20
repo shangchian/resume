@@ -32,6 +32,12 @@ test("server-renders the resume builder shell", async () => {
   assert.match(html, /Flutter App \/ REST 後端 \/ 技術主導工程師/);
   assert.match(html, /idempotency、防重複扣款、配發確認、退款\/補發/);
   assert.match(html, /凡立橙股份有限公司/);
+  const guideLink = /href="(https:\/\/1drv\.ms\/b\/[^"]+)"[^>]*>ECO-Buddy 手機遊戲與營運後台導覽（PDF）<\/a>/;
+  const job = html.match(/<section class="job">[^]*?凡立橙股份有限公司[^]*?<\/section>/)?.[0];
+  const card = html.match(/<section class="portfolio-card" id="ecoco-app">[^]*?<\/section>/)?.[0];
+  const href = job?.match(guideLink)?.[1];
+  assert.ok(href, "the employer experience must link directly to the PDF");
+  assert.equal(card?.match(guideLink)?.[1], href, "the ECO-Buddy card must link to the same guide");
   assert.match(html, /銳宇能源股份有限公司/);
   assert.match(html, /哈瑪星科技股份有限公司/);
   assert.match(html, /圓展科技股份有限公司/);
